@@ -1,7 +1,6 @@
 const fs = require("fs")
 const express = require("express")
 const app = express()
-const path = require("path")
 let currentDate = new Date();
 let date = currentDate.getDate();
 let month = currentDate.getMonth(); 
