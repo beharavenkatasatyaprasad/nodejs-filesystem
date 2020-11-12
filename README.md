@@ -1,6 +1,6 @@
 # nodejs-filesystem Application
 
-**An application implemented by using express , fs of npm.** 
+**An application implemented by using express & filesystem modules of node**
 
 - [x] The app can *create a text file* to myfolder in `currentdate-time.txt` format and writes timestamp as the content of the file.
 
