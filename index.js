@@ -1,5 +1,6 @@
 const fs = require("fs")
-const http = require("http")
+const express = require("express")
+const app = express()
 const path = require("path")
 
 let currentDate = new Date();
@@ -10,38 +11,51 @@ let year = currentDate.getFullYear();
 let seconds = currentDate.getSeconds();
 let hours = currentDate.getHours();
 let minutes = currentDate.getMinutes();
-let dateString = date + "-" +(month + 1) + "-" + year+"_"+hours+""+minutes+""+seconds;
+let dateString = date + "-" +(month + 1) + "-" + year+"_"+hours+":"+minutes+":"+seconds;
 let filename= date+"-"+hours+""+minutes+""+seconds;
 
+app.get('/',(req,res)=>{
+    res.redirect('/api')
+})
 
+app.get('/api',(req,res)=>{
+    res.status(200)
+    res.send(`
+    <ul>
+    <h1>Welcome</h1>
+        <li><h1>For Creating a new file in folder use <span style="color:red">/api/createfile</span></h1></li>
+        <li><h1>To retreive all the text files in folder use<span style="color:red">/api/retrivefiles</span></h1></li>
+    </ul>
+    `)
+})
 
-
-// To create txt file and to write timestamp content in it
-let writeStream = fs.createWriteStream(`${filename}.txt`);
-writeStream.write(`${dateString}`);
-
-writeStream.end();  
-
-
+app.get('/api/createfile',(req,res)=>{
+    fs.writeFile(`./myfolder/${filename}.txt`, `${dateString}`, function (err) {
+        if (err) throw err;               
+        res.send(`file successfully created`);
+        res.end()  
+    }); 
+    
+})
 // To read files from folder
-let s = "";
-    fs.readdir("./",{ withFileTypes: true },function(err,files){
+app.get('/api/retrivefiles',(req,res)=>{
+    let getfiles = '';
+    fs.readdir("./myfolder/",{ withFileTypes: true },function(err,files){
         if (err) throw err;
         files.forEach(file=>{
-            if(file.isDirectory()){
-                s+=`<li style="color:black;">${file["name"]}</li>`
-            }else if (file.isFile()){
-                s+=`<li>${file["name"]}</li>`
-            }
+            getfiles+=`<li style="color:green;">${file.name}</li>`
         })
+        res.status(200)
+        res.send(`
+                <h2>myfolder contains:</h2>
+                <h2>${getfiles}</h2>
+                `)
+        res.end()
     });
+})
 
     
 // To display in webpage
-http.createServer(function(req,res){
-    res.writeHead(200,{'content-Type':'text-html'})
-    res.write(`<h1>${s} </h1>`)
-    res.end()
-}).listen(process.env.PORT)
+app.listen(3000)
 
 
