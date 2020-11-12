@@ -2,9 +2,7 @@ const fs = require("fs")
 const express = require("express")
 const app = express()
 const path = require("path")
-
 let currentDate = new Date();
-
 let date = currentDate.getDate();
 let month = currentDate.getMonth(); 
 let year = currentDate.getFullYear();
@@ -14,10 +12,12 @@ let minutes = currentDate.getMinutes();
 let dateString = date + "-" +(month + 1) + "-" + year+"_"+hours+":"+minutes+":"+seconds;
 let filename= date+"-"+hours+""+minutes+""+seconds;
 
+//endpoint that redirects the user to the api homepage
 app.get('/',(req,res)=>{
     res.redirect('/api')
 })
 
+//endpoint for the home page
 app.get('/api',(req,res)=>{
     res.status(200)
     res.send(`
@@ -29,6 +29,7 @@ app.get('/api',(req,res)=>{
     `)
 })
 
+//Endpoint to createfile in the folder
 app.get('/api/createfile',(req,res)=>{
     fs.writeFile(`./myfolder/${filename}.txt`, `${dateString}`, function (err) {
         if (err) throw err;               
@@ -37,7 +38,8 @@ app.get('/api/createfile',(req,res)=>{
     }); 
     
 })
-// To read files from folder
+
+// Endpoint To read files from folder
 app.get('/api/retrivefiles',(req,res)=>{
     let getfiles = '';
     fs.readdir("./myfolder/",{ withFileTypes: true },function(err,files){
@@ -54,8 +56,5 @@ app.get('/api/retrivefiles',(req,res)=>{
     });
 })
 
-    
-// To display in webpage
-app.listen(3000)
-
-
+// App listening on process port or local host
+app.listen(process.env.PORT || 3000)
